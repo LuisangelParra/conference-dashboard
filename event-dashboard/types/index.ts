@@ -8,6 +8,9 @@ export type Event = {
 };
 
 export type Speaker = {
+  role: any;
+  tags: any;
+  company: any;
   id: string;
   name: string;
   bio: string;

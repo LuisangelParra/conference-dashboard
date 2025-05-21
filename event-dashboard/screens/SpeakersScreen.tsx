@@ -1,39 +1,92 @@
-import React from 'react';
-import { FlatList, StyleSheet } from 'react-native';
-import { Card, Text } from 'react-native-paper';
-import { Layout } from '../components';
-import { Speaker } from '../types';
+// src/screens/SpeakersScreen.tsx
 
-const mockSpeakers: Speaker[] = [
-  { id: '1', name: 'Alice', bio: 'Experta en React', photoUrl: '' },
-  { id: '2', name: 'Bob', bio: 'Ingeniero de ML', photoUrl: '' },
+import React, { useState } from 'react';
+import { FlatList, StyleSheet } from 'react-native';
+import { Searchbar } from 'react-native-paper';
+import { Layout } from '../components';
+import { SpeakerCard } from '../components/SpeakerCard';
+import { spacing } from '../theme/spacing';
+import { useTheme } from '@react-navigation/native';
+
+const mockSpeakers = [
+  {
+    id: '1',
+    name: 'Sarah Johnson',
+    role: 'Senior Frontend Engineer',
+    company: 'TechFront Solutions',
+    bio: 'Sarah has over 10 years of experience in frontend development and specializes in React and performance.',
+    tags: ['React', 'JavaScript', 'Web Performance'],
+    eventsCount: 1,
+  },
+  {
+    id: '2',
+    name: 'Michael Chen',
+    role: 'Cloud Architect',
+    company: 'CloudScale Inc.',
+    bio: 'Michael specializes in designing and implementing cloud-native architectures and DevOps pipelines.',
+    tags: ['Microservices', 'AWS', 'Kubernetes'],
+    eventsCount: 1,
+  },
+  // … más ponentes …
 ];
 
 export default function SpeakersScreen() {
-  const handleAdd = () => {
-    console.log('Abrir modal para crear ponente');
-  };
+  const [search, setSearch] = useState('');
+  const theme = useTheme();
+
+  const handleAdd = () => console.log('Abrir modal para crear ponente');
+
+  const filtered = mockSpeakers.filter((s) =>
+    [s.name, s.role, s.company, ...s.tags]
+      .join(' ')
+      .toLowerCase()
+      .includes(search.toLowerCase())
+  );
 
   return (
     <Layout onAddPress={handleAdd}>
-      <FlatList
-        data={mockSpeakers}
-        keyExtractor={(s) => s.id}
-        renderItem={({ item }) => (
-          <Card style={styles.card}>
-            <Card.Title title={item.name} />
-            <Card.Content>
-              <Text numberOfLines={2}>{item.bio}</Text>
-            </Card.Content>
-          </Card>
-        )}
-        contentContainerStyle={styles.list}
+      {/* Searchbar igual a la de Events */}
+      <Searchbar
+        placeholder="Search speakers by name, role, company or expertise..."
+        value={search}
+        onChangeText={setSearch}
+        style={styles.searchbar}
+        inputStyle={{ color: '#000000' }}
+        placeholderTextColor="#6B7280"
       />
+
+      {/* Grid de SpeakerCard */}
+      <FlatList
+  data={filtered}
+  keyExtractor={(item) => item.id}
+  numColumns={2}
+  columnWrapperStyle={{ justifyContent: 'space-between', marginBottom: spacing.gap }}
+  contentContainerStyle={{ paddingHorizontal: spacing.screenPadding, paddingBottom: spacing.gap }}
+  renderItem={({ item }) => (
+    <SpeakerCard
+      {...item}
+      onPressProfile={() => {/* navegar o modal */}}
+    />
+  )}
+/>
+
     </Layout>
   );
 }
 
 const styles = StyleSheet.create({
-  list: { paddingHorizontal: 16, paddingBottom: 16 },
-  card: { marginBottom: 12 },
+  searchbar: {
+    marginBottom: spacing.gap,
+    borderRadius: 24,
+    height: 48,
+    backgroundColor: '#FFFFFF',
+  },
+  row: {
+    justifyContent: 'space-between',
+    marginBottom: spacing.gap,
+  },
+  list: {
+    paddingHorizontal: spacing.screenPadding,
+    paddingBottom: spacing.gap,
+  },
 });

@@ -7,3 +7,6 @@ export { Layout } from './Layout';
 export { ScreenContainer } from './ScreenContainer';
 export { UpcomingEventsCard, UpcomingEvent } from './UpcomingEventsCard';
 export { TopRatedEventsCard, RatedEvent } from './TopRatedEventsCard';
+export { EventCard } from './EventCard';
+export { SpeakerCard } from './SpeakerCard';
+
